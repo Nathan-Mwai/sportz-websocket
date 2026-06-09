@@ -7,12 +7,6 @@ export const MATCH_STATUS = {
   FINISHED: 'finished',
 };
 
-// Helper function to check if a string is a valid ISO date string
-const isValidISODate = (val) => {
-  const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?$/;
-  return isoRegex.test(val) && !isNaN(Date.parse(val));
-};
-
 // Validates an optional limit as a coerced positive integer with a maximum of 100
 export const listMatchesQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(100).optional(),
@@ -28,15 +22,18 @@ export const createMatchSchema = z.object({
   sport: z.string().min(1, 'Sport cannot be empty'),
   homeTeam: z.string().min(1, 'Home team cannot be empty'),
   awayTeam: z.string().min(1, 'Away team cannot be empty'),
-  startTime: z.string().refine(isValidISODate, {
+  startTime: z.iso.datetime({
+    offset: true,
     message: 'startTime must be a valid ISO date string',
   }),
-  endTime: z.string().refine(isValidISODate, {
+  endTime: z.iso.datetime({
+    offset: true,
     message: 'endTime must be a valid ISO date string',
-  }),
+  }).nullable().optional(),
   homeScore: z.coerce.number().int().nonnegative().optional(),
   awayScore: z.coerce.number().int().nonnegative().optional(),
 }).superRefine((data, ctx) => {
+  if (!data.endTime) return;
   const start = Date.parse(data.startTime);
   const end = Date.parse(data.endTime);
   if (!isNaN(start) && !isNaN(end) && end <= start) {
