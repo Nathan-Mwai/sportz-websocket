@@ -10,11 +10,11 @@ export const matches = pgTable('matches', {
   homeTeam: text('home_team').notNull(),
   awayTeam: text('away_team').notNull(),
   status: matchStatus('status').default('scheduled').notNull(),
-  startTime: timestamp('start_time', { mode: 'date' }).notNull(),
-  endTime: timestamp('end_time', { mode: 'date' }),
+  startTime: timestamp('start_time', { withTimezone: true, mode: 'date' }).notNull(),
+  endTime: timestamp('end_time', { withTimezone: true, mode: 'date' }),
   homeScore: integer('home_score').default(0).notNull(),
   awayScore: integer('away_score').default(0).notNull(),
-  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 });
 
 // Commentary table
@@ -32,5 +32,5 @@ export const commentary = pgTable('commentary', {
   message: text('message').notNull(),
   metadata: jsonb('metadata'),
   tags: text('tags').array(),
-  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 });

@@ -8,6 +8,13 @@
       "when": 1781030894241,
       "tag": "0000_early_hobgoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781028996738,
+      "tag": "0001_many_molecule_man",
+      "breakpoints": true
     }
   ]
 }
