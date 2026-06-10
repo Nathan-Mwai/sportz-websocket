@@ -2,6 +2,7 @@ import express from 'express';
 import { matchRouter } from './routes/matches.js';
 import http from 'http';
 import { attachWebSocketServer } from './ws/server.js';
+import { securityMiddleware } from './arject.js';
 
 const PORT = Number(process.env.PORT) || 8000;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -11,10 +12,13 @@ const server = http.createServer(app)
 
 app.use(express.json());
 
+app.use(securityMiddleware())
+
 // Root GET route that returns a short message
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Sportz Realtime API server!' });
 });
+
 
 app.use('/matches', matchRouter)
 
