@@ -5,18 +5,18 @@ const arcjetMode = process.env.ARCJET_MODE === 'DRY_RUN'? 'DRY_RUN' : 'LIVE';
 
 if(!arcjetKey) throw new Error('ARCJET_KEY is missing')
 
-export const httpArcjet = arcjetKey ? arcjet({
+export const httpArcjet = arcjet({
     key: arcjetKey,
     rules:[
         shield({mode: arcjetMode}),
-        // detectBot({mode: arcjetMode, allow: ['CATEGORY:SEARCH_ENGINE', 'CATEGORY:PREVIEW']}),
+        detectBot({mode: arcjetMode, allow: ['CATEGORY:SEARCH_ENGINE', 'CATEGORY:PREVIEW']}),
         slidingWindow({mode: arcjetMode, interval:'10s', max:50})    
     ],
     name: 'sportz-api',
     
-}) : null; 
+}); 
 
-export const wsArcjet = arcjetKey ? arcjet({
+export const wsArcjet = arcjet({
     key: arcjetKey,
     rules:[
         shield({mode: arcjetMode}),
@@ -25,17 +25,15 @@ export const wsArcjet = arcjetKey ? arcjet({
     ],
     name: 'sportz-ws-api',
     
-}) : null; 
+})
 
 export function securityMiddleware(){
     return async (req,res,next) =>{
-        if(!httpArcjet) return next();
-
         try {
             const decision = await httpArcjet.protect(req)
 
-            if(decision.isDenied()){
-                if(decision.isRateLimit()){
+            if (decision.isDenied) {
+                if (decision.reason && decision.reason.isRateLimit) {
                     return res.status(429).json({error: 'Too Many Requests'})   
                 }
                 return res.status(403).json({error:"Access Denied"})

@@ -12,12 +12,13 @@ const server = http.createServer(app)
 
 app.use(express.json());
 
+app.use(securityMiddleware())
+
 // Root GET route that returns a short message
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Sportz Realtime API server!' });
 });
 
-app.use(securityMiddleware())
 
 app.use('/matches', matchRouter)
 
