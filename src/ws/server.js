@@ -91,15 +91,6 @@ export function attachWebSocketServer(server){
 
         let isReady = false;
 
-    // Attach listener immediately so no messages are completely lost
-    socket.on("message", (data)=> {
-        if (!isReady) {
-            console.log("Message dropped: Server not ready/validated yet.");
-            return; 
-        }
-        handleMessage(socket,data)
-    });
-
         if(wsArcjet){
             try {
                 const decision = await wsArcjet.protect(req)
